@@ -7,16 +7,22 @@ var loop;
 var density = 0.2;
 var freq = 100;
 var lineColor = "#eeeeee";
-var aliveColor = "#00eeee";//"#ffc0cb";
+var aliveColor = "#ffc0cb";
 var deadColor = "#000000";
 var wallColor = "#dcdcdc";
+var c, cxt;
 
-var c = document.getElementById("myCanvas");
-var cxt = c.getContext("2d");
 
-init();
 
-function init(){
+var gameinit = function(){
+	c = document.getElementById("myCanvas");
+	cxt = c.getContext("2d");
+	init();
+	paintLine();
+	initMap();
+}
+
+var init = function (){
 	map = new Array(gridCnt);
 	preMap = new Array(gridCnt);
 	for (var i = 0;i < gridCnt;i++){
@@ -31,35 +37,58 @@ function init(){
 			preMap[i][j] = -1;
 		}
 	}
-	paintLine();
-	initMap();
+
 }
+
+var isNum = function (str){
+	return (/^[+,-]?\d+(\.\d*)?$/.test(str) || /^\.\d+$/.test(str));
+ };
+ 
+ var isPositiveInt = function (str){
+    return /^\+?[1-9]\d*$/.test(str);
+ }
+ 
+ var formcorrect = function (dens, frequency, gridc){
+	 
+	if(!isNum(frequency) || Number(frequency) <= 0){
+		//alert("地图刷新帧率请输入正数");
+		//alert(frequency);
+		return false;
+	}
+	
+	if(!isNum(dens) || Number(dens) < 0 || Number(dens) > 1){
+		//alert("活细胞密度应为0到1之间的小数");
+		return false;
+	}
+	
+	if(!isPositiveInt(gridc) || Number(gridc) < 10 || Number(gridc) > 120){
+		//alert("网格规模应为10到120之间的整数");
+		return false;
+	}
+	
+	return true;
+ }
 
 function selfinit(){
 	stop();
 	var dens=myform.density.value;
-	var frequency=parseInt(myform.freq.value);
-	var gridc = parseInt(myform.gsize.value)
-
-	if(frequency.length!=0 && frequency > 0){
-		freq = frequency;
-	}
+	var frequency=myform.freq.value;
+	var gridc = myform.gsize.value;
 	
-	if(gridc.length!=0 && gridc > 0){
-		gridCnt = gridc;
+	var iscorrect = formcorrect(dens, frequency, gridc);
+	
+	if(iscorrect){
+		freq = 1000/Number(frequency);
+		density = Number(dens);
+		gridCnt = Number(gridc);
 		gridSize = myCanvas.width/gridCnt;
+		cxt.clearRect(0,0,myCanvas.width,myCanvas.height);
+		gameinit();
 	}
-	
-	if(dens.length!=0 && dens >= 0 && dens <=1){
-		density = dens;
-	}
-	cxt.clearRect(0,0,myCanvas.width,myCanvas.height);
-	init();
-	/* isStart = true;
-	start(); */
+
 }
 /*randomize map*/
-function initMap(){
+var initMap = function (){
 	for (var x = 0; x < map.length; x++) {
         for (var y = 0; y < map[x].length; y++) {
 			map[x][y] = (Math.random()<density) ? 1 : 0;
@@ -68,7 +97,7 @@ function initMap(){
 	paint();
 }
 
-function paintLine(){
+var paintLine = function (){
 	cxt.strokeStyle = lineColor;
     for (var i = 0; i <= gridCnt; i++) {
         cxt.moveTo(0, i * gridSize);
@@ -82,7 +111,7 @@ function paintLine(){
 }
 
 /*paint map*/
-function paint() {
+var paint = function () {
 	cxt.save();
     for (var x = 0; x < map.length; x++) {
         for (var y = 0; y < map[x].length; y++) {
@@ -113,12 +142,12 @@ function mouseClick(event) {
     paint();
 }
 
-function judge(){
+var judge = function (gridx, gridy){
 	var lifecnt = 0;
-	if(arguments.length === 2){
-		gridx = arguments[0];
+	/*if(arguments.length === 2){
+		 = arguments[0];
 		gridy = arguments[1];
-	}
+	}*/
 	for(var i = gridx - 2;i <= gridx + 2;i++){
 		if(i < 0 || i >= gridCnt || i === gridx){
 			continue;
@@ -150,7 +179,7 @@ function judge(){
 }
 
 /*change state*/
-function change(){
+var change = function(){
 	for (var i = 0;i < gridCnt;i++){
 		for(var j = 0;j < gridCnt;j++){
 			preMap[i][j] = judge(i,j);
@@ -166,7 +195,7 @@ function change(){
 	}
 }
  
-function start() {	
+var start = function () {	
 	isStart = true;
     loop = setInterval(function () {
 		change();
@@ -174,7 +203,8 @@ function start() {
     }, freq);
 }
 
-function stop(){
+var stop = function (){
+	//alert("stop");
 	clearInterval(loop);
 }
 
@@ -206,3 +236,41 @@ $(function(){
 		}
 	})
  });
+ 
+ window.lifegame = gameinit;
+ 
+ window.__test__ = {
+	 judge_:judge,
+	 change_:change,
+	 formcorrect_ :formcorrect,
+	 isNum_ :isNum,
+	 isPositiveInt_ :isPositiveInt,
+	 init_ :init,
+	 getgridCnt:function(){
+		 return gridCnt;
+	 },
+	 setgridCnt:function(val) {
+      gridCnt = val;
+	 },
+	 getdensity:function(){
+		 return density;
+	 },
+	 setdensity:function(val) {
+      density = val;
+	 },
+	 getfreq:function(){
+		 return freq;
+	 },
+	 setfreq:function(val) {
+      freq = val;
+	 },
+	 getmap:function(x, y){
+		 return map[x][y];
+	 },
+	 setmap:function(x, y, val){
+		 map[x][y] = val;
+	 },
+ }
+ 
+ 
+ 

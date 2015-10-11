@@ -12,8 +12,9 @@
 #fixed{
 	position:fixed;
 	margin:0 auto;
-	width: 150px;
+	width: 160px;
 	z-index:10;
+	background-color:white;
 	font-family:Microsoft YaHei;
 }
 input{
@@ -28,12 +29,13 @@ input{
 
 <body>
 <form name="myform" id = "fixed">
-  活细胞密度: <input type="text" name="density" />
-  地图刷新帧率: <input type="text" name="freq" />
-  网格规模: <input type="text" name="gsize" />
+  活细胞密度: <input type="text" name="density" value = "0.2"/>
+  地图刷新帧率: <input type="text" name="freq" value = "10" />
+  网格规模: <input type="text" name="gsize" value = "100" />
   <input type="button" value="Submit" id = "button" onclick="selfinit()"/>
   <input type="button" value="Start" id = "button" onclick="start()"/>
 </form>
 <canvas id="myCanvas" width="1000" height="1000" onclick="mouseClick(event)"></canvas>
 <script type="text/javascript" src="scripts/game.js"></script>
+<script type="text/javascript" src="scripts/main.js"></script>
 </body>
