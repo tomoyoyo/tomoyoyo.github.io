@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Game of Life</title>
+<style>
+#myCanvas{
+	display:block;
+	margin:0 auto;
+	position:relative;
+}
+#fixed{
+	position:fixed;
+	margin:0 auto;
+	width: 160px;
+	z-index:10;
+	background-color:white;
+	font-family:Microsoft YaHei;
+}
+input{
+	width: 150px;
+}
+#button{
+	width: 80px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<body>
+<form name="myform" id = "fixed">
+  活细胞密度: <input type="text" name="density" value = "0.2"/>
+  地图刷新帧率: <input type="text" name="freq" value = "10" />
+  网格规模: <input type="text" name="gsize" value = "100" />
+  <input type="button" value="Submit" id = "button" onclick="selfinit()"/>
+  <input type="button" value="Start" id = "button" onclick="start()"/>
+</form>
+<canvas id="myCanvas" width="1000" height="1000" onclick="mouseClick(event)"></canvas>
+<script type="text/javascript" src="scripts/game.js"></script>
+<script type="text/javascript" src="scripts/main.js"></script>
+</body>
